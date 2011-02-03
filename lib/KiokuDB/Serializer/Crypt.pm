@@ -1,6 +1,6 @@
 package KiokuDB::Serializer::Crypt;
 BEGIN {
-  $KiokuDB::Serializer::Crypt::VERSION = '0.01';
+  $KiokuDB::Serializer::Crypt::VERSION = '0.02';
 }
 use Moose;
 use namespace::autoclean;
@@ -80,6 +80,15 @@ around deserialize => sub {
     return $self->$orig($self->decrypt_string($collapsed), @args);
 };
 
+sub default_typemap {
+    my $self = shift;
+
+    return $self->serializer->default_typemap
+        if $self->serializer->default_typemap;
+
+    return KiokuDB::Typemap->new;
+}
+
 with 'KiokuDB::Backend::Serialize';
 
 
@@ -94,7 +103,7 @@ KiokuDB::Serializer::Crypt - encrypt data stored in L<KiokuDB>
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -153,6 +162,8 @@ The underlying serializer to use. KiokuDB will use this serializer to get a
 string representation of the object which will then be encrypted. Defaults to
 'storable'.
 
+=for Pod::Coverage default_typemap
+
 =head1 BUGS
 
 No known bugs.
@@ -209,7 +220,7 @@ Jesse Luehrs <doy at tozt dot net>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2010 by Jesse Luehrs.
+This software is copyright (c) 2011 by Jesse Luehrs.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
